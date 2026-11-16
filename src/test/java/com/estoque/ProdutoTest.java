@@ -60,4 +60,29 @@ class ProdutoTest {
         assertEquals(BigDecimal.ZERO, produto.preco());
     }
 
+    @Test
+    void deveRejeitarQuantidadeNegativa() {
+        assertThrows(ProdutoInvalidoException.class,
+                () -> new Produto(null, "Teclado", new BigDecimal("10.00"), -1));
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {0, -1, -10})
+    void deveRejeitarIdMenorOuIgualAZero(Long id) {
+        assertThrows(ProdutoInvalidoException.class,
+                () -> new Produto(id, "Teclado", new BigDecimal("10.00"), 1));
+    }
+
+    @Test
+    void deveCriarCopiaComNovoId() {
+        Produto produto = new Produto(
+                null, "Teclado", new BigDecimal("10.00"), 1
+        );
+
+        Produto produtoComId = produto.comId(7L);
+
+        assertEquals(7L, produtoComId.id());
+        assertEquals(produto.nome(), produtoComId.nome());
+    }
+
 }
