@@ -47,4 +47,17 @@ class ProdutoTest {
                 () -> new Produto(null, "Teclado", null, 1));
     }
 
+    @Test
+    void deveRejeitarPrecoNegativo() {
+        assertThrows(ProdutoInvalidoException.class,
+                () -> new Produto(null, "Teclado", new BigDecimal("-0.01"), 1));
+    }
+
+    @Test
+    void deveAceitarPrecoZero() {
+        Produto produto = new Produto(null, "Brinde", BigDecimal.ZERO, 1);
+
+        assertEquals(BigDecimal.ZERO, produto.preco());
+    }
+
 }
