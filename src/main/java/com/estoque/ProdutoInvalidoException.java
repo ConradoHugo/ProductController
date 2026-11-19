@@ -1,4 +1,8 @@
 package com.estoque;
 
-public class ProdutoInvalidoException {
+public class ProdutoInvalidoException extends RuntimeException {
+
+    public ProdutoInvalidoException(String mensagem) {
+        super(mensagem);
+    }
 }
