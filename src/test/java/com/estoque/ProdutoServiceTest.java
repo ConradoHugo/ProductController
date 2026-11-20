@@ -45,6 +45,37 @@ public class ProdutoServiceTest {
 
     }
 
+    @Test void deveAtualizarProduto() {
+
+        Produto p=service.criar("A",BigDecimal.ONE,1);
+        Produto a=service.atualizar(p.id(),"B",new BigDecimal("2"),3);
+        assertEquals("B",a.nome());
+        assertEquals(3,a.quantidade());
+
+    }
+
+    @Test void atualizacaoInvalidaNaoAlteraProduto() {
+
+        Produto p=service.criar("A",BigDecimal.ONE,1);
+        assertThrows(ProdutoInvalidoException.class,()->service.atualizar(p.id(),"",BigDecimal.ONE,2));
+        assertEquals(p,service.buscar(p.id()));
+
+    }
+
+    @Test void deveRemoverProduto() {
+
+        Produto p=service.criar("A",BigDecimal.ONE,1);
+        assertTrue(service.remover(p.id()));
+        assertTrue(service.listar().isEmpty());
+
+    }
+
+    @Test void removerInexistenteRetornaFalso() {
+
+        assertFalse(service.remover(99L));
+
+    }
+
 
 
 }
