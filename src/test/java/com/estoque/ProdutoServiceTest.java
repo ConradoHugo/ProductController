@@ -76,6 +76,42 @@ public class ProdutoServiceTest {
 
     }
 
+    @Test void deveAdicionarEstoque() {
+
+        Produto p=service.criar("A",BigDecimal.ONE,5);
+        assertEquals(8,service.adicionarEstoque(p.id(),3).quantidade());
+
+    }
+
+    @Test void deveRetirarEstoque() {
+
+        Produto p=service.criar("A",BigDecimal.ONE,5);
+        assertEquals(3,service.retirarEstoque(p.id(),2).quantidade());
+
+    }
+
+    @Test void naoPermiteEstoqueInsuficiente() {
+
+        Produto p=service.criar("A",BigDecimal.ONE,5);
+        assertThrows(ProdutoInvalidoException.class,()->service.retirarEstoque(p.id(),6));
+        assertEquals(5,service.buscar(p.id()).quantidade());
+
+    }
+
+    @Test void rejeitaMovimentacaoNaoPositiva() {
+
+        Produto p=service.criar("A",BigDecimal.ONE,5);
+        assertThrows(ProdutoInvalidoException.class,()->service.adicionarEstoque(p.id(),0));
+        assertThrows(ProdutoInvalidoException.class,()->service.retirarEstoque(p.id(),-1));
+
+    }
+
+    @Test void rejeitaRepositoryNulo() {
+
+        assertThrows(IllegalArgumentException.class,()->new ProdutoService(null));
+
+    }
+
 
 
 }
