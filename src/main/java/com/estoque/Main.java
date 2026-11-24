@@ -1,4 +1,4 @@
 package com.estoque;
 
-public class main {
+public class Main {
 }
