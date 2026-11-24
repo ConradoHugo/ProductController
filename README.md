@@ -6,6 +6,15 @@ Este projeto consiste em um sistema de gerenciamento de produtos desenvolvido em
 
 O sistema permite realizar operações de cadastro, consulta, atualização e remoção de produtos, além de controlar a movimentação do estoque.
 
+## Integrantes
+
+<!-- Completar com o nome completo de cada integrante e o que cada um desenvolveu. -->
+
+| Integrante | Contribuição |
+|------------|--------------|
+| João (completar o sobrenome) | GREEN do Produto (record e validações), testes de limite e correções de estrutura do projeto |
+| _completar_ | _completar_ |
+
 ## Tecnologias utilizadas
 
 - **Java 17** — linguagem de programação.
@@ -29,7 +38,7 @@ O sistema permite realizar operações de cadastro, consulta, atualização e re
 ## Estrutura do projeto
 
 ```text
-Product-Management/
+ProductController/
 ├── pom.xml
 ├── README.md
 └── src/
@@ -61,13 +70,13 @@ Product-Management/
 ### 1. Clonar o repositório
 
 ```bash
-git clone URL_DO_SEU_REPOSITORIO
+git clone https://github.com/ConradoHugo/ProductController.git
 ```
 
 ### 2. Entrar na pasta do projeto
 
 ```bash
-cd Product-Management
+cd ProductController
 ```
 
 ### 3. Executar os testes
