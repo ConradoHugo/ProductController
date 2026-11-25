@@ -98,6 +98,18 @@ class MainTest {
         assertTrue(saida.contains("Entrada encerrada. Saindo..."));
     }
 
+    @Test
+    void menuTemTodasAsOpcoesEmNoMaximoQuatroLinhas() {
+        String saida = rodar("0");
+
+        String menu = saida.substring(saida.indexOf("====="), saida.indexOf("Escolha uma opção"));
+        assertTrue(menu.lines().count() <= 4, "menu alto demais esconde o resultado no terminal");
+        for (String opcao : new String[]{"1 - Cadastrar", "2 - Buscar", "3 - Listar", "4 - Atualizar",
+                "5 - Remover", "6 - Adicionar estoque", "7 - Retirar estoque", "0 - Sair"}) {
+            assertTrue(menu.contains(opcao), opcao);
+        }
+    }
+
     // ------------------------------------------------------------------
     // 1 - Cadastrar
     // ------------------------------------------------------------------
@@ -200,6 +212,16 @@ class MainTest {
 
         assertTrue(saida.contains("[1] Caneta"));
         assertTrue(saida.contains("[2] Caderno | R$ 15.00 | estoque: 5"));
+    }
+
+    @Test
+    void listarMostraTituloComAQuantidadeEExplicaOId() {
+        service.criar("Caneta", new BigDecimal("2.50"), 10);
+        service.criar("Caderno", new BigDecimal("15"), 5);
+
+        String saida = rodar("3", "0");
+
+        assertTrue(saida.contains("Produtos cadastrados: 2 (o ID é o número entre colchetes)"));
     }
 
     // ------------------------------------------------------------------
