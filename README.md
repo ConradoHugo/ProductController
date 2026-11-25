@@ -1,5 +1,7 @@
 # Sistema de Gerenciamento de Produtos
 
+**Tema:** controle de estoque de produtos (CRUD de produtos com entrada e saída de estoque).
+
 ## Sobre o projeto
 
 Este projeto consiste em um sistema de gerenciamento de produtos desenvolvido em Java, com o objetivo de praticar conceitos de Programação Orientada a Objetos (POO), organização de código, tratamento de exceções e desenvolvimento orientado a testes (TDD).
@@ -8,12 +10,11 @@ O sistema permite realizar operações de cadastro, consulta, atualização e re
 
 ## Integrantes
 
-<!-- Completar com o nome completo de cada integrante e o que cada um desenvolveu. -->
-
 | Integrante | Contribuição |
 |------------|--------------|
-| João (completar o sobrenome) | GREEN do Produto (record e validações), testes de limite e correções de estrutura do projeto |
-| _completar_ | _completar_ |
+| Hugo Benício Conrado | Estrutura inicial do projeto (pom, README, .gitignore), testes (RED) de `Produto` e `ProdutoService` e criação das exceções |
+| João Vitor Barcelos Oliveira | GREEN do `Produto` (record e validações), testes de limite do `Produto`, correções de estrutura do projeto e menu de console (`Main`) |
+| _(nome completo do Atos)_ | RED e GREEN do `ProdutoRepository` e do `ProdutoService`, testes complementares de limite e erro |
 
 ## Tecnologias utilizadas
 
@@ -57,6 +58,7 @@ ProductController/
             └── com/
                 └── estoque/
                     ├── ProdutoTest.java
+                    ├── ProdutoRepositoryTest.java
                     └── ProdutoServiceTest.java
 ```
 
@@ -90,6 +92,10 @@ mvn clean test
 ```bash
 mvn compile exec:java
 ```
+
+Abre um menu no terminal com as opções: cadastrar, buscar por ID, listar, atualizar, remover, adicionar estoque, retirar estoque e sair.
+
+> No Windows, se os acentos aparecerem como símbolos estranhos, rode `chcp 65001` no terminal antes do comando acima.
 
 ## Testes automatizados
 
