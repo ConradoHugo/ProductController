@@ -13,8 +13,8 @@ O sistema permite realizar operações de cadastro, consulta, atualização e re
 | Integrante | Contribuição |
 |------------|--------------|
 | Hugo Benício Conrado | Estrutura inicial do projeto (pom, README, .gitignore), testes (RED) de `Produto` e `ProdutoService` e criação das exceções |
-| João Vitor Barcelos Oliveira | GREEN do `Produto` (record e validações), testes de limite do `Produto`, correções de estrutura do projeto e menu de console (`Main`) |
-| _(nome completo do Atos)_ | RED e GREEN do `ProdutoRepository` e do `ProdutoService`, testes complementares de limite e erro |
+| João Vitor Barcelos Oliveira | GREEN do `Produto` (record e validações), testes de limite do `Produto`, correções de estrutura do projeto e menu de console (`Main`) com seus testes (`MainTest`) |
+| Atos Tavares Furini | RED e GREEN do `ProdutoRepository` e do `ProdutoService`, testes complementares de limite e erro |
 
 ## Tecnologias utilizadas
 
@@ -57,6 +57,7 @@ ProductController/
         └── java/
             └── com/
                 └── estoque/
+                    ├── MainTest.java
                     ├── ProdutoTest.java
                     ├── ProdutoRepositoryTest.java
                     └── ProdutoServiceTest.java
