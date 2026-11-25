@@ -70,14 +70,9 @@ public class Main {
     private void exibirMenu() {
         saida.println();
         saida.println("===== GERENCIADOR DE PRODUTOS =====");
-        saida.println("1 - Cadastrar produto");
-        saida.println("2 - Buscar produto por ID");
-        saida.println("3 - Listar produtos");
-        saida.println("4 - Atualizar produto");
-        saida.println("5 - Remover produto");
-        saida.println("6 - Adicionar estoque");
-        saida.println("7 - Retirar estoque");
-        saida.println("0 - Sair");
+        // Poucas linhas de propósito: um menu alto empurra o resultado para fora do terminal.
+        saida.println("1 - Cadastrar | 2 - Buscar por ID | 3 - Listar | 4 - Atualizar");
+        saida.println("5 - Remover | 6 - Adicionar estoque | 7 - Retirar estoque | 0 - Sair");
     }
 
     private void executarOpcao(int opcao) {
@@ -115,6 +110,7 @@ public class Main {
             saida.println("Nenhum produto cadastrado.");
             return;
         }
+        saida.println("Produtos cadastrados: " + produtos.size() + " (o ID é o número entre colchetes)");
         produtos.forEach(p -> saida.println(formatar(p)));
     }
 
