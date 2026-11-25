@@ -1,5 +1,6 @@
 package com.estoque;
 
+import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -7,28 +8,56 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
- * Ponto de entrada da aplicação: menu de console para gerenciar produtos.
+ * Menu de console para gerenciar produtos (ponto de entrada da aplicação).
  * Toda a regra de negócio fica no ProdutoService; aqui só lemos o que o
  * usuário digitou, chamamos o service e mostramos o resultado.
+ *
+ * A entrada (de onde lê), a saída (onde escreve) e o service são recebidos
+ * no construtor. No programa de verdade são o teclado e a tela; nos testes
+ * (MainTest) são um texto pronto e um buffer, o que permite testar o menu.
  */
 public class Main {
 
-    private static final Scanner entrada = new Scanner(System.in);
-    private static final ProdutoService service = new ProdutoService(new ProdutoRepository());
+    private final Scanner entrada;
+    private final PrintStream saida;
+    private final ProdutoService service;
 
+    public Main(Scanner entrada, PrintStream saida, ProdutoService service) {
+        if (entrada == null) {
+            throw new IllegalArgumentException("A entrada não pode ser nula.");
+        }
+        if (saida == null) {
+            throw new IllegalArgumentException("A saída não pode ser nula.");
+        }
+        if (service == null) {
+            throw new IllegalArgumentException("O service não pode ser nulo.");
+        }
+        this.entrada = entrada;
+        this.saida = saida;
+        this.service = service;
+    }
+
+    /** Ponto de entrada: monta o menu com o teclado, a tela e um repositório novo. */
     public static void main(String[] args) {
+        ProdutoService service = new ProdutoService(new ProdutoRepository());
+        new Main(new Scanner(System.in), System.out, service).executar();
+    }
+
+    /** Mostra o menu em loop até o usuário escolher 0 (ou a entrada acabar). */
+    public void executar() {
         int opcao = -1;
         while (opcao != 0) {
             exibirMenu();
             try {
                 opcao = lerInteiro("Escolha uma opção: ");
-                executar(opcao);
+                executarOpcao(opcao);
             } catch (ProdutoInvalidoException | ProdutoNaoEncontradoException e) {
                 // Erros de regra de negócio: só mostramos a mensagem e voltamos ao menu.
-                System.out.println("Erro: " + e.getMessage());
+                saida.println("Erro: " + e.getMessage());
             } catch (NoSuchElementException e) {
-                // A entrada foi encerrada (Ctrl+D / Ctrl+Z): sai sem stack trace.
-                System.out.println("\nEntrada encerrada. Saindo...");
+                // A entrada foi encerrada (Ctrl+Z / fim do texto): sai sem stack trace.
+                saida.println();
+                saida.println("Entrada encerrada. Saindo...");
                 opcao = 0;
             }
         }
@@ -38,20 +67,20 @@ public class Main {
     // Menu
     // ------------------------------------------------------------------
 
-    private static void exibirMenu() {
-        System.out.println();
-        System.out.println("===== GERENCIADOR DE PRODUTOS =====");
-        System.out.println("1 - Cadastrar produto");
-        System.out.println("2 - Buscar produto por ID");
-        System.out.println("3 - Listar produtos");
-        System.out.println("4 - Atualizar produto");
-        System.out.println("5 - Remover produto");
-        System.out.println("6 - Adicionar estoque");
-        System.out.println("7 - Retirar estoque");
-        System.out.println("0 - Sair");
+    private void exibirMenu() {
+        saida.println();
+        saida.println("===== GERENCIADOR DE PRODUTOS =====");
+        saida.println("1 - Cadastrar produto");
+        saida.println("2 - Buscar produto por ID");
+        saida.println("3 - Listar produtos");
+        saida.println("4 - Atualizar produto");
+        saida.println("5 - Remover produto");
+        saida.println("6 - Adicionar estoque");
+        saida.println("7 - Retirar estoque");
+        saida.println("0 - Sair");
     }
 
-    private static void executar(int opcao) {
+    private void executarOpcao(int opcao) {
         switch (opcao) {
             case 1 -> cadastrar();
             case 2 -> buscar();
@@ -60,8 +89,8 @@ public class Main {
             case 5 -> remover();
             case 6 -> adicionarEstoque();
             case 7 -> retirarEstoque();
-            case 0 -> System.out.println("Encerrando o sistema. Até logo!");
-            default -> System.out.println("Opção inválida. Escolha um número do menu.");
+            case 0 -> saida.println("Encerrando o sistema. Até logo!");
+            default -> saida.println("Opção inválida. Escolha um número do menu.");
         }
     }
 
@@ -70,119 +99,119 @@ public class Main {
     // ------------------------------------------------------------------
 
     /** C do CRUD: cadastra um produto novo; o id é gerado pelo repositório. */
-    private static void cadastrar() {
+    private void cadastrar() {
         String nome = lerTexto("Nome: ");
         BigDecimal preco = lerPreco("Preço (ex.: 19,90): ");
         int quantidade = lerInteiro("Quantidade inicial: ");
 
         Produto criado = service.criar(nome, preco, quantidade);
-        System.out.println("Produto cadastrado: " + formatar(criado));
+        saida.println("Produto cadastrado: " + formatar(criado));
     }
 
     /** R do CRUD: mostra todos os produtos. */
-    private static void listar() {
+    private void listar() {
         List<Produto> produtos = service.listar();
         if (produtos.isEmpty()) {
-            System.out.println("Nenhum produto cadastrado.");
+            saida.println("Nenhum produto cadastrado.");
             return;
         }
-        produtos.forEach(p -> System.out.println(formatar(p)));
+        produtos.forEach(p -> saida.println(formatar(p)));
     }
 
     /** R do CRUD: mostra um produto pelo id. */
-    private static void buscar() {
+    private void buscar() {
         Long id = lerId("ID do produto: ");
 
         Produto encontrado = service.buscar(id);
-        System.out.println(formatar(encontrado));
+        saida.println(formatar(encontrado));
     }
 
     /** U do CRUD: troca nome, preço e quantidade de um produto existente. */
-    private static void atualizar() {
+    private void atualizar() {
         Long id = lerId("ID do produto: ");
         // Mostra o produto antes de pedir os novos dados (e já falha se o id não existir).
-        System.out.println("Atual: " + formatar(service.buscar(id)));
+        saida.println("Atual: " + formatar(service.buscar(id)));
 
         String nome = lerTexto("Novo nome: ");
         BigDecimal preco = lerPreco("Novo preço (ex.: 19,90): ");
         int quantidade = lerInteiro("Nova quantidade: ");
 
         Produto atualizado = service.atualizar(id, nome, preco, quantidade);
-        System.out.println("Produto atualizado: " + formatar(atualizado));
+        saida.println("Produto atualizado: " + formatar(atualizado));
     }
 
     /** D do CRUD: remove um produto. O service devolve false se o id não existia. */
-    private static void remover() {
+    private void remover() {
         Long id = lerId("ID do produto: ");
 
         if (service.remover(id)) {
-            System.out.println("Produto " + id + " removido.");
+            saida.println("Produto " + id + " removido.");
         } else {
-            System.out.println("Nenhum produto com id " + id + " para remover.");
+            saida.println("Nenhum produto com id " + id + " para remover.");
         }
     }
 
     /** Entrada de estoque: soma unidades ao produto. */
-    private static void adicionarEstoque() {
+    private void adicionarEstoque() {
         Long id = lerId("ID do produto: ");
         int quantidade = lerInteiro("Quantidade a adicionar: ");
 
         Produto atualizado = service.adicionarEstoque(id, quantidade);
-        System.out.println("Estoque atualizado: " + formatar(atualizado));
+        saida.println("Estoque atualizado: " + formatar(atualizado));
     }
 
     /** Saída de estoque: retira unidades, sem deixar o estoque ficar negativo. */
-    private static void retirarEstoque() {
+    private void retirarEstoque() {
         Long id = lerId("ID do produto: ");
         int quantidade = lerInteiro("Quantidade a retirar: ");
 
         Produto atualizado = service.retirarEstoque(id, quantidade);
-        System.out.println("Estoque atualizado: " + formatar(atualizado));
+        saida.println("Estoque atualizado: " + formatar(atualizado));
     }
 
     // ------------------------------------------------------------------
     // Leitura de dados e formatação
     // ------------------------------------------------------------------
 
-    private static String lerTexto(String mensagem) {
-        System.out.print(mensagem);
+    private String lerTexto(String mensagem) {
+        saida.print(mensagem);
         return entrada.nextLine();
     }
 
     /** Repete a pergunta até o usuário digitar um número inteiro válido. */
-    private static int lerInteiro(String mensagem) {
+    private int lerInteiro(String mensagem) {
         while (true) {
             try {
                 return Integer.parseInt(lerTexto(mensagem).trim());
             } catch (NumberFormatException e) {
-                System.out.println("Valor inválido. Digite um número inteiro.");
+                saida.println("Valor inválido. Digite um número inteiro.");
             }
         }
     }
 
     /** Igual ao lerInteiro, mas devolve Long (usado para os IDs). */
-    private static Long lerId(String mensagem) {
+    private Long lerId(String mensagem) {
         while (true) {
             try {
                 return Long.parseLong(lerTexto(mensagem).trim());
             } catch (NumberFormatException e) {
-                System.out.println("ID inválido. Digite um número inteiro.");
+                saida.println("ID inválido. Digite um número inteiro.");
             }
         }
     }
 
     /** Aceita vírgula ou ponto como separador decimal (19,90 ou 19.90). */
-    private static BigDecimal lerPreco(String mensagem) {
+    private BigDecimal lerPreco(String mensagem) {
         while (true) {
             try {
                 return new BigDecimal(lerTexto(mensagem).trim().replace(',', '.'));
             } catch (NumberFormatException e) {
-                System.out.println("Preço inválido. Exemplo: 19,90");
+                saida.println("Preço inválido. Exemplo: 19,90");
             }
         }
     }
 
-    private static String formatar(Produto p) {
+    private String formatar(Produto p) {
         return String.format("[%d] %s | R$ %s | estoque: %d",
                 p.id(), p.nome(), p.preco().setScale(2, RoundingMode.HALF_UP), p.quantidade());
     }
