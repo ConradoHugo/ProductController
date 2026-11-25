@@ -85,4 +85,39 @@ class ProdutoTest {
         assertEquals(produto.nome(), produtoComId.nome());
     }
 
+    @Test
+    void deveAceitarQuantidadeZero() {
+        Produto produto = new Produto(null, "Teclado", new BigDecimal("10.00"), 0);
+
+        assertEquals(0, produto.quantidade());
+    }
+
+    @Test
+    void deveAceitarIdIgualAUm() {
+        Produto produto = new Produto(1L, "Teclado", new BigDecimal("10.00"), 1);
+
+        assertEquals(1L, produto.id());
+    }
+
+    @Test
+    void deveManterPrecoEQuantidadeAoCriarCopiaComNovoId() {
+        Produto produto = new Produto(
+                null, "Teclado", new BigDecimal("10.00"), 4
+        );
+
+        Produto produtoComId = produto.comId(7L);
+
+        assertEquals(produto.preco(), produtoComId.preco());
+        assertEquals(produto.quantidade(), produtoComId.quantidade());
+    }
+
+    @Test
+    void deveRejeitarNovoIdInvalidoAoCriarCopia() {
+        Produto produto = new Produto(
+                null, "Teclado", new BigDecimal("10.00"), 1
+        );
+
+        assertThrows(ProdutoInvalidoException.class, () -> produto.comId(0L));
+    }
+
 }
